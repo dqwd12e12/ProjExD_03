@@ -86,7 +86,6 @@ class Bird:
             self.img = self.imgs[tuple(sum_mv)]
         screen.blit(self.img, self.rct)
 
-
 class Beam:
     def __init__(self, bird: Bird):
         """
@@ -149,7 +148,8 @@ def main():
     bg_img = pg.image.load("ex03/fig/pg_bg.jpg")
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
-    beam = None
+
+    beam_list = []#Beamクラスのインスタンスを複数扱うための空のリスト
 
     clock = pg.time.Clock()
     tmr = 0
@@ -160,6 +160,8 @@ def main():
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # キーが押されたら，かつ，キーの種類がスペースキーだったら
                 beam = Beam(bird)
+
+                beam_list.append(beam)
 
 
         screen.blit(bg_img, [0, 0])
@@ -180,21 +182,24 @@ def main():
                 time.sleep(1)
                 return
         for i, bomb in enumerate(bombs):
-            if beam is not None:
+            for j, beam in enumerate(beam_list):
                 if beam.rct.colliderect(bomb.rct):  # ビームと爆弾の衝突判定
                     # 撃墜＝Noneにする
-                    beam = None
+                    beam[j] = None
                     bombs[i] = None
                     bird.change_img(6, screen)
                     pg.display.update() 
-        bombs = [bomb for bomb in bombs if bomb is not None]         
+            beam_list = [beam for beam in beam_list if beam is not None]  
+        bombs = [bomb for bomb in bombs if bomb is not None] 
+               
+
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         #bomb.update(screen) 
         for bomb in bombs:
             bomb.update(screen)
-        if beam is not None:
+        if beam in beam_list:
             beam.update(screen)
         pg.display.update()
         tmr += 1
