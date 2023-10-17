@@ -184,22 +184,19 @@ def main():
         for i, bomb in enumerate(bombs):
             for j, beam in enumerate(beam_list):
                 if beam.rct.colliderect(bomb.rct):  # ビームと爆弾の衝突判定
-                    # 撃墜＝Noneにする
-                    beam[j] = None
                     bombs[i] = None
                     bird.change_img(6, screen)
                     pg.display.update() 
-            beam_list = [beam for beam in beam_list if beam is not None]  
-        bombs = [bomb for bomb in bombs if bomb is not None] 
-               
+            beam_list = [beam for beam in beam_list if beam is not None]  # ビームをリストに格納するときに必要
+        bombs = [bomb for bomb in bombs if bomb is not None]  #爆弾をリストに格納するときに必要
 
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        #bomb.update(screen) 
+        bomb.update(screen) 
         for bomb in bombs:
             bomb.update(screen)
-        if beam in beam_list:
+        for beam in beam_list:
             beam.update(screen)
         pg.display.update()
         tmr += 1
